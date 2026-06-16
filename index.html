@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blind Test 🎵</title>
+<style>
+:root {
+  --orange: #ff9933;
+  --vert:   #99cc00;
+  --bleu:   #0066cc;
+  --rose:   #cc0066;
+  --ciel:   #c7def1;
+  --white:  #ffffff;
+  --card:   rgba(255,255,255,0.15);
+  --card2:  rgba(255,255,255,0.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Segoe UI',Arial,sans-serif;
+  min-height:100vh;
+  background: linear-gradient(135deg, #0066cc 0%, #cc0066 50%, #ff9933 100%);
+  color:#fff;
+}
+
+header{
+  background:rgba(0,0,0,0.2);
+  backdrop-filter:blur(10px);
+  padding:.85rem 1.25rem;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:2px solid rgba(255,255,255,0.2);
+}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-title{font-size:1.2rem;font-weight:800;letter-spacing:.5px;color:#fff}
+.logo-title span{color:var(--ciel)}
+
+.screen{display:none}.screen.active{display:block}
+.prog-wrap{height:6px;background:rgba(0,0,0,0.2);overflow:hidden}
+.prog-fill{height:100%;transition:width .4s;background:#fff}
+
+/* CARDS */
+.card{
+  background:var(--card);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:20px;
+  padding:1.5rem;
+}
+
+/* START */
+.start-wrap{max-width:460px;margin:0 auto;padding:2rem 1.25rem;text-align:center}
+.hero-icon{font-size:4rem;margin-bottom:.75rem;display:block;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3))}
+h1{font-size:2rem;font-weight:800;margin-bottom:.4rem;text-shadow:0 2px 8px rgba(0,0,0,0.3)}
+h1 .acc{color:var(--ciel)}
+.sub{font-size:.9rem;color:rgba(255,255,255,0.85);line-height:1.7;margin-bottom:1.75rem}
+
+.name-row{margin-bottom:1.1rem;text-align:left}
+.name-row label{font-size:.85rem;color:rgba(255,255,255,0.8);display:block;margin-bottom:6px;font-weight:600}
+.name-row input{
+  width:100%;padding:.75rem 1rem;border-radius:12px;
+  border:2px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(8px);
+  color:#fff;font-size:1rem;
+}
+.name-row input::placeholder{color:rgba(255,255,255,0.5)}
+.name-row input:focus{outline:none;border-color:#fff;background:rgba(255,255,255,0.25)}
+
+.nb-row{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:1.75rem}
+.nb-row label{font-size:.9rem;color:rgba(255,255,255,0.8);font-weight:600}
+.nb-row select{
+  padding:7px 12px;border-radius:10px;
+  border:2px solid rgba(255,255,255,0.3);
+  font-size:.9rem;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(8px);
+  color:#fff;
+}
+.nb-row select option{background:#0066cc;color:#fff}
+
+.start-btn{
+  background:#fff;border:none;color:var(--bleu);
+  font-size:1.1rem;font-weight:800;padding:1rem 3rem;
+  border-radius:30px;cursor:pointer;
+  transition:transform .1s,box-shadow .15s;
+  letter-spacing:.5px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.2);
+}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.3)}
+.start-btn:active{transform:scale(.97)}
+
+.lb-link{
+  margin-top:1.25rem;background:none;border:2px solid rgba(255,255,255,0.4);
+  color:#fff;font-size:.9rem;font-weight:600;
+  cursor:pointer;border-radius:30px;padding:.6rem 1.5rem;
+  display:inline-block;transition:background .15s;
+}
+.lb-link:hover{background:rgba(255,255,255,0.15)}
+
+/* GAME */
+.game-wrap{max-width:600px;margin:0 auto;padding:1.25rem 1rem}
+.topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+.qnum{font-size:.8rem;color:rgba(255,255,255,0.7);letter-spacing:.5px;text-transform:uppercase;font-weight:600}
+.player-tag{font-size:.85rem;color:#fff;font-weight:700;background:rgba(0,0,0,0.2);padding:4px 12px;border-radius:20px}
+
+.reflect-banner{
+  text-align:center;padding:.75rem;border-radius:14px;
+  background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.2);
+  font-size:.95rem;font-weight:700;margin-bottom:1rem;color:#fff;
+}
+
+.timer-box{display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem}
+.timer-circle{
+  width:70px;height:70px;border-radius:50%;
+  border:5px solid rgba(255,255,255,0.4);
+  background:rgba(0,0,0,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.6rem;font-weight:800;color:#fff;
+  transition:border-color .3s;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+.timer-circle.warn{border-color:#fff;background:rgba(204,0,102,0.5);animation:tick .5s infinite}
+@keyframes tick{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+
+/* ANSWERS */
+.ans-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+@media(max-width:480px){.ans-grid{grid-template-columns:1fr}}
+.ans-btn{
+  padding:1.1rem .9rem;border-radius:16px;border:2px solid rgba(255,255,255,0.3);
+  font-size:.95rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;gap:12px;
+  transition:transform .12s,box-shadow .12s,filter .12s;
+  color:#fff;text-align:left;line-height:1.3;
+  box-shadow:0 4px 15px rgba(0,0,0,0.15);
+}
+.ans-btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,0.25)}
+.ans-btn:active:not(:disabled){transform:scale(.97)}
+.ans-btn:disabled{cursor:default;transform:none}
+.ans-icon{font-size:2rem;flex-shrink:0;line-height:1;width:36px;text-align:center}
+.ans-artist{font-size:.92rem;font-weight:800}
+.ans-title{font-size:.78rem;opacity:.9;font-weight:500;margin-top:2px;font-style:italic}
+
+.ans-btn.a0{background:linear-gradient(135deg,#ff9933,#e67300)}
+.ans-btn.a1{background:linear-gradient(135deg,#99cc00,#6ea800)}
+.ans-btn.a2{background:linear-gradient(135deg,#0066cc,#004fa3)}
+.ans-btn.a3{background:linear-gradient(135deg,#cc0066,#9a004d)}
+
+.ans-btn.selected{border-color:#fff;border-width:3px;box-shadow:0 0 0 3px rgba(255,255,255,0.4)}
+.ans-btn:disabled.a0,.ans-btn:disabled.a1,.ans-btn:disabled.a2,.ans-btn:disabled.a3{opacity:.6}
+
+.fb-bar{
+  display:none;text-align:center;padding:.75rem;font-weight:800;font-size:1rem;
+  border-radius:12px;margin-bottom:.75rem;
+}
+.fb-bar.recorded{background:rgba(255,255,255,0.2);color:#fff;border:2px solid rgba(255,255,255,0.4);display:block;backdrop-filter:blur(8px)}
+.fb-bar.timeout{background:rgba(204,0,102,0.3);color:#fff;border:2px solid rgba(255,255,255,0.3);display:block}
+
+.nxt-btn{
+  width:100%;padding:.9rem;background:#fff;border:none;
+  color:var(--bleu);font-size:1rem;font-weight:800;border-radius:14px;
+  cursor:pointer;display:none;transition:transform .1s,box-shadow .15s;
+  box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+.nxt-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.25)}
+.nxt-btn.vis{display:block}
+
+/* END */
+.end-wrap{max-width:500px;margin:0 auto;padding:2.5rem 1.25rem;text-align:center}
+.big-score{font-size:4rem;font-weight:800;margin:1rem 0;text-shadow:0 4px 15px rgba(0,0,0,0.3)}
+.rank-txt{font-size:1rem;color:rgba(255,255,255,0.85);margin-bottom:2rem;line-height:1.5}
+.btn-row{display:flex;flex-direction:column;gap:.75rem;align-items:center}
+.end-btn{
+  border:none;font-size:1rem;font-weight:700;padding:.9rem 2.5rem;
+  border-radius:30px;cursor:pointer;width:100%;max-width:300px;
+  transition:transform .1s,box-shadow .15s;box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+.end-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.3)}
+.end-btn.primary{background:#fff;color:var(--bleu)}
+.end-btn.secondary{background:rgba(255,255,255,0.15);color:#fff;border:2px solid rgba(255,255,255,0.4)}
+
+/* LEADERBOARD */
+.lb-wrap{max-width:500px;margin:0 auto;padding:1.5rem 1rem}
+.lb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.lb-header h2{font-size:1.4rem;font-weight:800}
+.lb-clear{background:none;border:2px solid rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);font-size:.8rem;cursor:pointer;border-radius:20px;padding:4px 12px}
+.lb-loading{text-align:center;color:rgba(255,255,255,0.6);padding:2rem 0;font-size:.95rem}
+.lb-empty{text-align:center;color:rgba(255,255,255,0.6);padding:2rem 0;font-size:.95rem}
+
+.lb-table{width:100%;border-collapse:collapse}
+.lb-table th{text-align:left;font-size:.72rem;color:rgba(255,255,255,0.6);text-transform:uppercase;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,0.2);letter-spacing:.5px}
+.lb-table td{padding:12px 10px;border-bottom:1px solid rgba(255,255,255,0.1);vertical-align:middle}
+.lb-rank{font-size:1.3rem;width:44px}
+.lb-name{font-weight:800;font-size:.95rem}
+.lb-sub{font-size:.72rem;color:rgba(255,255,255,0.55);margin-top:2px}
+.lb-score{text-align:right;font-weight:800;font-size:1.1rem;color:#fff}
+.lb-pct{text-align:right;font-size:.8rem;color:rgba(255,255,255,0.6)}
+.lb-bar-wrap{width:80px;background:rgba(0,0,0,0.2);border-radius:4px;height:6px;margin-top:5px;margin-left:auto}
+.lb-bar-fill{height:6px;border-radius:4px}
+
+.lb-back{
+  margin-top:1.5rem;background:rgba(255,255,255,0.15);
+  border:2px solid rgba(255,255,255,0.3);color:#fff;
+  font-size:.9rem;font-weight:700;padding:.75rem 2rem;
+  border-radius:30px;cursor:pointer;width:100%;
+  transition:background .15s;
+}
+.lb-back:hover{background:rgba(255,255,255,0.25)}
+
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#99cc00;display:inline-block;margin-left:6px;animation:pulse 2s infinite;vertical-align:middle}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-title">🎵 Blind<span>Test</span></div>
+  </div>
+</header>
+<div class="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+
+<!-- START -->
+<div id="s-start" class="screen active">
+  <div class="start-wrap">
+    <span class="hero-icon">🎵</span>
+    <h1>Blind Test <span class="acc">50 Extraits</span></h1>
+    <p class="sub">Écoute l'extrait sur l'écran principal,<br>choisis ta réponse en <b>12 secondes</b> !</p>
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="name-row" style="margin-bottom:.85rem">
+        <label>Ton prénom ou nom d'équipe :</label>
+        <input type="text" id="player-name" placeholder="Ex : Julie, Les Mélomanes…" maxlength="24">
+      </div>
+      <div class="nb-row" style="margin-bottom:0">
+        <label>Extraits :</label>
+        <select id="nb-sel">
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="50" selected>50 (tous)</option>
+        </select>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startGame()">▶ Commencer</button>
+    <br><br>
+    <button class="lb-link" onclick="openLB()">🏆 Voir le classement</button>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="s-game" class="screen">
+  <div class="game-wrap">
+    <div class="topline">
+      <span class="qnum" id="q-num">Extrait 1 / 50</span>
+      <span class="player-tag" id="player-tag"></span>
+    </div>
+    <div class="reflect-banner" id="reflect-banner">🎧 Écoute bien... à toi de jouer !</div>
+    <div class="timer-box">
+      <div class="timer-circle" id="timer-circle">12</div>
+    </div>
+    <div class="ans-grid" id="ans-grid"></div>
+    <div class="fb-bar" id="fb-bar"></div>
+    <button class="nxt-btn" id="nxt-btn" onclick="nextQ()">Extrait suivant →</button>
+  </div>
+</div>
+
+<!-- END -->
+<div id="s-end" class="screen">
+  <div class="end-wrap">
+    <span class="hero-icon">🏆</span>
+    <h1 id="end-title">Résultat final</h1>
+    <div class="big-score" id="end-score"></div>
+    <div class="rank-txt" id="end-rank"></div>
+    <div class="btn-row">
+      <button class="end-btn primary" onclick="openLB()">📊 Voir le classement</button>
+      <button class="end-btn secondary" onclick="restart()">↺ Rejouer</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="s-lb" class="screen">
+  <div class="lb-wrap">
+    <div class="lb-header">
+      <h2>🏆 Classement <span class="sync-dot"></span></h2>
+      <button class="lb-clear" onclick="clearLB()">Effacer</button>
+    </div>
+    <div id="lb-content"><div class="lb-loading">Chargement…</div></div>
+    <button class="lb-back" onclick="show('s-start')">← Retour</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove, query, orderByChild } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAvTLj2V2lW-c9XDyMepLyPNvsIYvFocbI",
+  authDomain: "blindtest-32e6a.firebaseapp.com",
+  databaseURL: "https://blindtest-32e6a-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "blindtest-32e6a",
+  storageBucket: "blindtest-32e6a.firebasestorage.app",
+  messagingSenderId: "234731844824",
+  appId: "1:234731844824:web:9a554a3baca6563d2853ad"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const scoresRef = ref(db, 'scores');
+
+const SONGS=[
+  {a:"Francis Cabrel - Je l\'aime à mourir", b:"Jean-Jacques Goldman - Quand la musique est bonne", c:"Julien Clerc - Femmes je vous aime", d:"Patrick Bruel - Place des grands hommes"},
+  {a:"Sexion d\'Assaut - Ma Direction", b:"Black M - Sur ma route", c:"Gims - Bella", d:"Soprano - Cosmo"},
+  {a:"Angèle - Balance ton quoi", b:"Clara Luciani - La Grenade", c:"Louane - Avenir", d:"Zaz - Je veux"},
+  {a:"Johnny Hallyday - Allumer le feu", b:"Florent Pagny - Savoir aimer", c:"Eddy Mitchell - Couleur menthe à l\'eau", d:"Michel Sardou - Les Lacs du Connemara"},
+  {a:"Rihanna - Diamonds", b:"Beyoncé - Halo", c:"Katy Perry - Firework", d:"Shakira - Waka Waka"},
+  {a:"Naps - La Kiffance", b:"Jul - Tchikita", c:"Gazo - Die", d:"Soolking - Suavemente"},
+  {a:"Thierry Hazard - Le Jerk", b:"Début de Soirée - Nuit de folie", c:"Images - Les Démons de minuit", d:"Partenaire Particulier - Partenaire Particulier"},
+  {a:"Black Eyed Peas - I Gotta Feeling", b:"LMFAO - Party Rock Anthem", c:"Maroon 5 - Moves Like Jagger", d:"OneRepublic - Counting Stars"},
+  {a:"Luis Fonsi ft Daddy Yankee - Despacito", b:"Enrique Iglesias - Bailando", c:"Maluma - Felices los 4", d:"J Balvin - Mi Gente"},
+  {a:"Lucenzo ft Don Omar - Danza Kuduro", b:"Daddy Yankee - Limbo", c:"Pitbull - Hotel Room Service", d:"Wisin & Yandel - Rakata"},
+  {a:"ABBA - Gimme! Gimme! Gimme!", b:"Boney M - Rasputin", c:"Bee Gees - Stayin\' Alive", d:"Village People - YMCA"},
+  {a:"James Arthur - Impossible", b:"Lewis Capaldi - Someone You Loved", c:"Ed Sheeran - Perfect", d:"Tom Walker - Leave a Light On"},
+  {a:"A-ha - Take On Me", b:"Alphaville - Forever Young", c:"Duran Duran - The Reflex", d:"Tears for Fears - Everybody Wants to Rule the World"},
+  {a:"Harry Styles - As It Was", b:"Shawn Mendes - Treat You Better", c:"Justin Bieber - Love Yourself", d:"Charlie Puth - Attention"},
+  {a:"Manau - La Tribu de Dana", b:"IAM - Je danse le Mia", c:"MC Solaar - Caroline", d:"NTM - Ma Benz"},
+  {a:"Indila - SOS", b:"Vitaa - À fleur de toi", c:"Zaho - C\'est chelou", d:"Chimène Badi - Entre nous"},
+  {a:"Début de Soirée - Nuit de folie", b:"Images - Les Démons de minuit", c:"Gold - Plus près des étoiles", d:"Les Forbans - Chante"},
+  {a:"Wham! - Wake Me Up Before You Go-Go", b:"Culture Club - Karma Chameleon", c:"Bananarama - Venus", d:"Modern Talking - You\'re My Heart, You\'re My Soul"},
+  {a:"The Weeknd - Blinding Lights", b:"Dua Lipa - Don\'t Start Now", c:"Post Malone - Circles", d:"Imagine Dragons - Believer"},
+  {a:"Nicki Minaj - Starships", b:"Cardi B - Bodak Yellow", c:"Doja Cat - Say So", d:"Megan Thee Stallion - Savage"},
+  {a:"Louise Attaque - J\'t\'emmène au vent", b:"Noir Désir - Le vent nous portera", c:"Téléphone - Cendrillon", d:"Tryo - Désolé pour hier soir"},
+  {a:"Kalash ft Damso - Mwaka Moon", b:"Ninho - Lettre à une femme", c:"Gims - Sapés comme jamais", d:"SCH - Otto"},
+  {a:"Michael Jackson - Beat It", b:"Prince - Purple Rain", c:"Lionel Richie - All Night Long", d:"Stevie Wonder - Superstition"},
+  {a:"Daft Punk ft Pharrell Williams - Get Lucky", b:"David Guetta ft Sia - Titanium", c:"Justice - D.A.N.C.E.", d:"Calvin Harris - Summer"},
+  {a:"Christina Perri - Human", b:"Birdy - Skinny Love", c:"Adele - Someone Like You", d:"Dido - White Flag"},
+  {a:"Michel Sardou - Les Lacs du Connemara", b:"Serge Lama - Je suis malade", c:"Joe Dassin - L\'Été indien", d:"Hervé Vilard - Capri c\'est fini"},
+  {a:"The Weeknd - The Hills", b:"Drake - God\'s Plan", c:"Travis Scott - Goosebumps", d:"Post Malone - Rockstar"},
+  {a:"Francis Cabrel - La Corrida", b:"Alain Souchon - Foule sentimentale", c:"Maxime Le Forestier - Mon frère", d:"Jean Ferrat - La Montagne"},
+  {a:"Eminem - Lose Yourself", b:"50 Cent - In Da Club", c:"Dr Dre - Still D.R.E.", d:"Snoop Dogg - Drop It Like It\'s Hot"},
+  {a:"The Chainsmokers & Coldplay - Something Just Like This", b:"Imagine Dragons - Thunder", c:"OneRepublic - Counting Stars", d:"Maroon 5 - Sugar"},
+  {a:"Julie Pietri - Ève lève-toi", b:"Jeanne Mas - En rouge et noir", c:"Lio - Banana Split", d:"Desireless - Voyage Voyage"},
+  {a:"Bruno Mars - Locked Out of Heaven", b:"Justin Timberlake - Can\'t Stop the Feeling", c:"Jason Derulo - Want To Want Me", d:"Usher - Yeah!"},
+  {a:"Ariana Grande - One Last Time", b:"Selena Gomez - Lose You To Love Me", c:"Demi Lovato - Sorry Not Sorry", d:"Camila Cabello - Havana"},
+  {a:"Rick Astley - Never Gonna Give You Up", b:"George Michael - Faith", c:"Elton John - I\'m Still Standing", d:"Phil Collins - In the Air Tonight"},
+  {a:"Jean-Jacques Goldman - Envole-moi", b:"Daniel Balavoine - L\'Aziza", c:"Francis Cabrel - Petite Marie", d:"Florent Pagny - Et un jour une femme"},
+  {a:"Taylor Swift - Shake It Off", b:"Olivia Rodrigo - Drivers License", c:"Sabrina Carpenter - Espresso", d:"Katy Perry - Roar"},
+  {a:"Alan Walker - Faded", b:"Avicii - Wake Me Up", c:"Martin Garrix - Animals", d:"Kygo - Firestone"},
+  {a:"Whitney Houston - I Will Always Love You", b:"Mariah Carey - Hero", c:"Céline Dion - Pour que tu m\'aimes encore", d:"Toni Braxton - Un-Break My Heart"},
+  {a:"OneRepublic - Counting Stars", b:"Imagine Dragons - Demons", c:"The Script - Hall of Fame", d:"Maroon 5 - Payphone"},
+  {a:"Soprano - Roule", b:"Black M - Je suis chez moi", c:"Kendji Girac - Andalouse", d:"Claudio Capéo - Un homme debout"},
+  {a:"Gilbert Montagné - Les Sunlights des Tropiques", b:"Patrick Hernandez - Born to Be Alive", c:"François Feldman - Joue pas", d:"Jean-Luc Lahaye - Femme que j\'aime"},
+  {a:"Vianney - Je m\'en vais", b:"Claudio Capéo - Riche", c:"Amir - J\'ai cherché", d:"Kendji Girac - Color Gitano"},
+  {a:"Queen - The Show Must Go On", b:"Scorpions - Wind of Change", c:"Bon Jovi - It\'s My Life", d:"Aerosmith - I Don\'t Want to Miss a Thing"},
+  {a:"Pitbull ft Ke$ha - Timber", b:"Flo Rida - Whistle", c:"LMFAO - Sexy and I Know It", d:"Jason Derulo - Talk Dirty"},
+  {a:"Les Forbans - Chante", b:"Début de Soirée - Nuit de folie", c:"Images - Les Démons de minuit", d:"Gold - Plus près des étoiles"},
+  {a:"Sia - Unstoppable", b:"Pink - Just Give Me a Reason", c:"Ava Max - Kings & Queens", d:"Ellie Goulding - Love Me Like You Do"},
+  {a:"Orelsan - L\'Odeur de l\'essence", b:"Bigflo & Oli - Dommage", c:"Nekfeu - On verra", d:"Vald - Désaccordé"},
+  {a:"ABBA - Dancing Queen", b:"Boney M - Daddy Cool", c:"Bee Gees - Night Fever", d:"Village People - Macho Man"},
+  {a:"XXXTentacion - Sad!", b:"Juice WRLD - Lucid Dreams", c:"Lil Peep - Star Shopping", d:"Trippie Redd - Love Scars"},
+  {a:"Petit Biscuit - Sunset Lover", b:"Kygo - Stole the Show", c:"Feder - Goodbye", d:"Kungs - This Girl"}
+];
+
+const ANSWER_DEFS=[
+  {icon:"𝄞",cls:"a0"},{icon:"♩",cls:"a1"},{icon:"♫",cls:"a2"},{icon:"𝄾",cls:"a3"}
+];
+const MEDALS=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
+
+let order=[],cur=0,score=0,timerInt=null,answered=false,currentQ=null,playerName='';
+
+window.startGame=function(){
+  const name=document.getElementById('player-name').value.trim();
+  if(!name){document.getElementById('player-name').focus();document.getElementById('player-name').style.borderColor='#fff';return;}
+  playerName=name;
+  const nb=parseInt(document.getElementById('nb-sel').value);
+  order=SONGS.map((_,i)=>i).slice(0,nb);
+  cur=0;score=0;
+  document.getElementById('player-tag').textContent='👤 '+playerName;
+  loadQ();show('s-game');
+};
+
+function loadQ(){
+  answered=false;
+  const n=order.length;
+  document.getElementById('prog-fill').style.width=`${cur/n*100}%`;
+  document.getElementById('q-num').textContent=`Extrait ${cur+1} / ${n}`;
+  document.getElementById('reflect-banner').textContent='🎧 Écoute bien... à toi de jouer !';
+  const correctIdx=order[cur];
+  const correctSong=SONGS[correctIdx];
+  // Chaque proposition = "Artiste - Titre" complet, on mélange les 4
+  const allOpts = [
+    {label: correctSong.a, correct: true},
+    {label: correctSong.b, correct: false},
+    {label: correctSong.c, correct: false},
+    {label: correctSong.d, correct: false},
+  ];
+  const shuffled = shuffle(allOpts);
+  const correctPos = shuffled.findIndex(o => o.correct);
+  currentQ = {correctPos};
+  document.getElementById('ans-grid').innerHTML=shuffled.map((opt,i)=>{
+    const def=ANSWER_DEFS[i];
+    const parts = opt.label.split(' - ');
+    const artist = parts[0];
+    const title = parts.slice(1).join(' - ');
+    return `<button class="ans-btn ${def.cls}" onclick="pick(${i},this)">
+      <span class="ans-icon">${def.icon}</span>
+      <div><div class="ans-artist">${artist}</div><div class="ans-title">${title}</div></div>
+    </button>`;
+  }).join('');
+  const fb=document.getElementById('fb-bar');fb.className='fb-bar';fb.textContent='';
+  document.getElementById('nxt-btn').classList.remove('vis');
+  startTimer();
+}
+
+function startTimer(){
+  let t=12;
+  const circle=document.getElementById('timer-circle');
+  circle.textContent=t;circle.classList.remove('warn');
+  clearInterval(timerInt);
+  timerInt=setInterval(()=>{t--;circle.textContent=t;if(t<=4)circle.classList.add('warn');if(t<=0){clearInterval(timerInt);if(!answered)timeOut();}},1000);
+}
+
+window.pick=function(idx,btn){
+  if(answered)return;answered=true;clearInterval(timerInt);
+  document.querySelectorAll('.ans-btn').forEach(b=>b.disabled=true);
+  btn.classList.add('selected');
+  if(idx===currentQ.correctPos)score++;
+  document.getElementById('reflect-banner').textContent='👀 Regarde l\'écran pour la réponse !';
+  const fb=document.getElementById('fb-bar');fb.className='fb-bar recorded';fb.textContent='✓ Réponse enregistrée !';
+  const nxt=document.getElementById('nxt-btn');nxt.classList.add('vis');
+  nxt.textContent=cur+1<order.length?'Extrait suivant →':'Voir le résultat 🏆';
+};
+
+function timeOut(){
+  answered=true;
+  document.querySelectorAll('.ans-btn').forEach(b=>b.disabled=true);
+  document.getElementById('reflect-banner').textContent='👀 Regarde l\'écran pour la réponse !';
+  const fb=document.getElementById('fb-bar');fb.className='fb-bar timeout';fb.textContent='⏱️ Temps écoulé !';
+  const nxt=document.getElementById('nxt-btn');nxt.classList.add('vis');
+  nxt.textContent=cur+1<order.length?'Extrait suivant →':'Voir le résultat 🏆';
+}
+
+window.nextQ=function(){cur++;if(cur>=order.length)endGame();else loadQ();};
+
+function endGame(){
+  document.getElementById('prog-fill').style.width='100%';
+  document.getElementById('end-title').textContent=`Bravo ${playerName} !`;
+  document.getElementById('end-score').textContent=`${score} / ${order.length}`;
+  const r=score/order.length;
+  document.getElementById('end-rank').textContent=r>=.9?'🥇 Expert musical absolu !':r>=.7?'🥈 Très bonne culture musicale !':r>=.5?'🥉 Pas mal, quelques lacunes !':'🎵 Continue d\'écouter de la musique !';
+  push(scoresRef,{name:playerName,score,total:order.length,pct:Math.round(score/order.length*100),date:new Date().toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})});
+  show('s-end');
+}
+
+window.openLB=function(){
+  show('s-lb');
+  document.getElementById('lb-content').innerHTML='<div class="lb-loading">Chargement…</div>';
+  onValue(query(scoresRef,orderByChild('pct')),(snapshot)=>{
+    const data=snapshot.val();
+    if(!data){document.getElementById('lb-content').innerHTML='<div class="lb-empty">Aucun score pour le moment.</div>';return;}
+    const entries=Object.entries(data).map(([k,v])=>({key:k,...v})).sort((a,b)=>b.pct-a.pct||b.score-a.score);
+    document.getElementById('lb-content').innerHTML=`<table class="lb-table">
+      <thead><tr><th>#</th><th>Joueur / Équipe</th><th style="text-align:right">Score</th></tr></thead>
+      <tbody>${entries.map((r,i)=>`<tr>
+        <td class="lb-rank">${MEDALS[i]||i+1}</td>
+        <td><div class="lb-name">${esc(r.name)}</div><div class="lb-sub">${r.date} · ${r.total} extraits</div>
+          <div class="lb-bar-wrap"><div class="lb-bar-fill" style="width:${r.pct}%;background:${r.pct>=80?'#99cc00':r.pct>=50?'#ff9933':'#cc0066'}"></div></div></td>
+        <td><div class="lb-score">${r.score}/${r.total}</div><div class="lb-pct">${r.pct}%</div></td>
+      </tr>`).join('')}</tbody></table>`;
+  },{onlyOnce:true});
+};
+
+window.clearLB=function(){if(confirm('Effacer tout le classement ?')){remove(scoresRef);document.getElementById('lb-content').innerHTML='<div class="lb-empty">Classement effacé.</div>';}};
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function shuffle(a){let r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+window.show=function(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');};
+window.restart=function(){document.getElementById('player-name').value='';show('s-start');};
+</script>
+</body>
+</html>
